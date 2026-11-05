@@ -1,0 +1,29 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+TestResults/
+appsettings.*.local.json
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# Visual Studio
+.vs/
+
+# Node / Angular (frontend/.gitignore cubre el resto)
+node_modules/
+dist/
+.angular/
+
+# Variables de entorno
+.env
+.env.*
+!.env.example
+
+# Sistema
+.DS_Store
+Thumbs.db

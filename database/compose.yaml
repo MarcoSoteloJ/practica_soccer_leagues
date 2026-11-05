@@ -1,0 +1,12 @@
+﻿services:
+    db:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        container_name: soccer-db
+        environment:
+            ACCEPT_EULA: "Y"
+            MSSQL_SA_PASSWORD: ${MSSQL_DB_PSSWD}
+            TZ: America/Mexico_City
+        ports: 
+           - "1433:1433"
+        platform: linux/amd64
+        
