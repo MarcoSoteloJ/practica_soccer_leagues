@@ -85,5 +85,16 @@ public class TeamsController : ControllerBase
         
         return NoContent();
     }
+    
+    [HttpGet("{id}/leagues")]
+    public async Task<List<League>> GetTeamLeagues(int id)
+    {
+        return await (
+            from leagueTeam in _context.LeagueTeams
+            join league in _context.Leagues on leagueTeam.LeagueId equals league.Id
+            where leagueTeam.TeamId == id
+            select league
+        ).ToListAsync();
+    }
 }
 

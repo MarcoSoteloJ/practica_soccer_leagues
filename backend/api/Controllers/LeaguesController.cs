@@ -98,4 +98,55 @@ public class LeaguesController : ControllerBase
         
         return NoContent();
     }
+    
+    [HttpGet("{id}/teams")]
+    public async Task<List<Team>> GetLeagueTeams(int id)
+    {
+        return await (
+            from leagueTeam in _context.LeagueTeams
+            join team in _context.Teams on leagueTeam.TeamId equals team.Id
+            where leagueTeam.LeagueId == id
+            select team
+        ).ToListAsync();
+    }
+
+    [HttpPost("{id}/teams/{teamId}")]
+    public async Task<IActionResult> AddTeamToLeague(int id, int teamId)
+    {
+        var leagueExists = await _context.Leagues.AnyAsync(league => league.Id == id);
+        var teamExists = await _context.Teams.AnyAsync(team => team.Id == teamId);
+
+        if (!leagueExists || !teamExists)
+        {
+            return NotFound();
+        }
+
+        var alreadyInLeague = await _context.LeagueTeams.FindAsync(id, teamId);
+
+        if (alreadyInLeague != null)
+        {
+            return Conflict("The team is already in this league");
+        }
+
+        _context.LeagueTeams.Add(new LeagueTeam { LeagueId = id, TeamId = teamId });
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}/teams/{teamId}")]
+    public async Task<IActionResult> RemoveTeamFromLeague(int id, int teamId)
+    {
+        var leagueTeam = await _context.LeagueTeams.FindAsync(id, teamId);
+
+        if (leagueTeam == null)
+        {
+            return NotFound();
+        }
+
+        _context.LeagueTeams.Remove(leagueTeam);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }

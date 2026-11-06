@@ -1,59 +1,77 @@
-# Frontend
+# Soccer Leagues
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.5.
+A full-stack app to manage soccer leagues and teams, with a many-to-many relationship between them. The backend is built with C# and .NET, and the frontend with Angular and TypeScript.
 
-## Development server
+## Tech stack
 
-To start a local development server, run:
+- **Backend:** C#, .NET 10, ASP.NET Core and Entity Framework Core
+- **Frontend:** Angular 22, TypeScript and Tailwind CSS
+- **Database:** SQL Server 2022
 
-```bash
-ng serve
-```
+## Project decisions
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **Architecture:** the API follows an MVC-style pattern with models and controllers. Angular handles the views.
+- **UI:** the layout uses flexbox with Tailwind CSS to arrange the components.
+-- **Docker:** an optional Docker Compose file runs SQL Server, for anyone without a local installation or a Windows computer.
+- **AI use:** I used Claude Code as support to build this practice and understand the syntax.
 
-## Code scaffolding
+## Project structure
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- `database/`: SQL script and Docker Compose file
+- `backend/api/`: REST API
+- `frontend/`: Angular app
 
-```bash
-ng generate component component-name
-```
+## Getting started
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+You need the .NET 10 SDK, Node.js and a SQL Server instance. You can use a local installation or Docker.
 
-```bash
-ng generate --help
-```
+### 1. Set up the database
 
-## Building
+Use one of these two options to get SQL Server running.
 
-To build the project run:
+**Option A: local SQL Server**
 
-```bash
-ng build
-```
+Use your existing SQL Server installation and go to the next step.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+**Option B: Docker**
 
 ```bash
-ng test
+cd database
+cp .env.example .env
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+Set your password in `.env`. SQL Server requires at least 8 characters, using 3 of these 4 types: uppercase, lowercase, numbers and symbols.
 
 ```bash
-ng e2e
+docker compose up -d
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+To keep your data, stop the container with `docker compose stop`. Running `docker compose down` deletes the database.
 
-## Additional Resources
+**Create the database**
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+With either option, run `database/create_soccer_db.sql` in your SQL client.
+### 2. Start the API
+
+```bash
+cd backend/api
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost,1433;Database=Soccer;User Id=sa;Password=YOUR_PASSWORD;TrustServerCertificate=True;"
+dotnet run --launch-profile http
+```
+
+The API runs at `http://localhost:5137`.
+
+### 3. Start the frontend
+
+```bash
+cd frontend
+npm install
+npx ng serve
+```
+
+Open `http://localhost:4200`.
+
+
+## Possible improvements
+
+- Validate names and player counts in the API too. Angular and SQL enforce them today, so invalid data sent directly to the API returns a `500` error.
